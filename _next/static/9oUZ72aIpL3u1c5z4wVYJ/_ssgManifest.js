@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fbilan\u002F[id]\u002Fevaluation","\u002Fbilan\u002F[id]\u002Fplan","\u002Fbilan\u002F[id]\u002Fprofil","\u002Fbilan\u002F[id]\u002Fresultats","\u002Fbilan\u002F[id]\u002Fsynthese"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
