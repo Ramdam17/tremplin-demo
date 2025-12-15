@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Users, BookOpen, Settings, LogOut } from "lucide-react"
+import { LayoutDashboard, Users, BookOpen, Settings, LogOut, Briefcase } from "lucide-react"
 
 const navigation = [
     { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
@@ -14,6 +15,28 @@ const navigation = [
 
 export function Sidebar() {
     const pathname = usePathname()
+    const [role, setRole] = useState<"rh" | "salarie">("rh")
+
+    useEffect(() => {
+        const storedRole = localStorage.getItem("userRole") as "rh" | "salarie"
+        if (storedRole) setRole(storedRole)
+    }, [])
+
+    const rhNavigation = [
+        { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
+        { name: "Bilans", href: "/bilans", icon: Users },
+        { name: "Catalogue Métiers", href: "/catalogue", icon: BookOpen },
+        { name: "Paramètres", href: "/settings", icon: Settings },
+    ]
+
+    const salarieNavigation = [
+        { name: "Mon Espace", href: "/dashboard-salarie", icon: LayoutDashboard },
+        { name: "Mon Parcours", href: "/bilan/new/profil", icon: BookOpen }, // Pointing to current bilan flow
+        { name: "Catalogue Métiers", href: "/catalogue", icon: Briefcase }, // Reusing existing page
+        { name: "Mes Paramètres", href: "/settings", icon: Settings },
+    ]
+
+    const navigation = role === "rh" ? rhNavigation : salarieNavigation
 
     return (
         <div className="flex h-full w-64 flex-col border-r bg-card">
@@ -50,7 +73,14 @@ export function Sidebar() {
                 </nav>
             </div>
             <div className="border-t p-4">
-                <button className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive">
+                <button
+                    onClick={() => {
+                        localStorage.removeItem("userRole")
+                        // Force hard reload to clear state and go to login
+                        window.location.href = "/login"
+                    }}
+                    className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                >
                     <LogOut className="mr-3 h-5 w-5" />
                     Déconnexion
                 </button>
