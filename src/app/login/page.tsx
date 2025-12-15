@@ -15,9 +15,8 @@ export default function LoginPage() {
         if (role === "rh") {
             router.push("/dashboard")
         } else {
-            // For demo, redirect to a specific bilan or new one
-            // Let's redirect to a fresh bilan for the demo flow
-            router.push("/bilan/new/profil")
+            // Redirect to the new dedicated employee dashboard
+            router.push("/dashboard-salarie")
         }
     }
 
