@@ -28,28 +28,55 @@ export function ChatAssistant() {
         }
     }, [messages, isTyping])
 
+    // Knowledge Base for the Demo
+    const knowledgeBase = [
+        {
+            keywords: ["financement", "cout", "coût", "payer", "prix", "cpf", "argent"],
+            response: "Le financement est un point clé. Dans votre cas, nous pouvons mobiliser votre **CPF** (2 150 € disponibles) et solliciter un **abondement correctif** de l'entreprise. \n\nEn moyenne, le reste à charge pour le salarié est de **0 €** grâce à ces dispositifs."
+        },
+        {
+            keywords: ["salaire", "gagner", "rémunération", "paye", "argent"],
+            response: "Pour le poste de **Technicien de Maintenance**, le salaire médian à l'embauche est de **2 100 € net/mois**, soit une augmentation de **+15%** par rapport à votre poste actuel. \n\nLes perspectives d'évolution vers Chef d'équipe sont rapides (2-3 ans)."
+        },
+        {
+            keywords: ["formation", "durée", "temps", "ou", "école", "afpa", "greta"],
+            response: "Nous avons identifié le **Titre Pro TMI** (Niveau 4). \n\n• **Durée** : 6 mois (850 heures)\n• **Lieu** : AFPA Prouvy (à 15km)\n• **Rythme** : Possibilité de le faire en alternance ou en congé de transition professionnelle."
+        },
+        {
+            keywords: ["peur", "stress", "difficile", "capable", "niveau", "peux pas"],
+            response: "C'est normal d'avoir des doutes. Sachez que **85% de vos compétences actuelles** (rigueur, sécurité, travail d'équipe) sont transférables.\n\nLa formation est très pratique (70% d'atelier) et conçue pour des profils comme le vôtre."
+        },
+        {
+            keywords: ["bonjour", "salut", "hello", "coucou"],
+            response: "Bonjour ! 😊 Je suis ravi de vous voir. Une question sur votre projet ou la prochaine étape ?"
+        }
+    ]
+
+    const findBestResponse = (userInput: string) => {
+        const lowerInput = userInput.toLowerCase()
+        const match = knowledgeBase.find(item =>
+            item.keywords.some(keyword => lowerInput.includes(keyword))
+        )
+        return match ? match.response : "C'est une excellente question. Je n'ai pas la réponse exacte là tout de suite, mais je peux **planifier un échange de 15 min** avec un conseiller RH pour creuser ce point. \n\nVoulez-vous que je regarde les disponibilités ?"
+    }
+
     const handleSendMessage = () => {
         if (!input.trim()) return
 
         const userMsg: Message = { id: Date.now().toString(), role: "user", text: input }
         setMessages(prev => [...prev, userMsg])
+        const userQuestion = input // Capture for closure
         setInput("")
         setIsTyping(true)
 
-        // Fake bot reply
-        setTimeout(() => {
-            const botResponses = [
-                "C'est une excellente question. D'après votre profil, le financement CPF est le plus adapté.",
-                "Je vois que vous visez le métier de Technicien de Maintenance. C'est un secteur en forte tension.",
-                "Absolument ! Nous pouvons organiser un rendez-vous avec un conseiller humain si vous le souhaitez.",
-                "Votre solde CPF actuel permet de couvrir 85% de cette formation.",
-                "Je note cette information dans votre dossier."
-            ]
-            const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)]
+        // Simulate reading & typing time based on complexity
+        const delay = 1000 + Math.random() * 1000
 
-            setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: "bot", text: randomResponse }])
+        setTimeout(() => {
+            const responseText = findBestResponse(userQuestion)
+            setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: "bot", text: responseText }])
             setIsTyping(false)
-        }, 1500)
+        }, delay)
     }
 
     return (
@@ -71,10 +98,12 @@ export function ChatAssistant() {
                 <div ref={scrollRef} className="h-80 overflow-y-auto p-4 space-y-4">
                     {messages.map((msg) => (
                         <div key={msg.id} className={cn(
-                            "flex w-max max-w-[80%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                            "flex w-max max-w-[85%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre-wrap",
                             msg.role === "user" ? "ml-auto bg-primary text-primary-foreground" : "bg-muted"
                         )}>
-                            {msg.text}
+                            {msg.text.split("**").map((part, i) =>
+                                i % 2 === 1 ? <span key={i} className="font-bold">{part}</span> : part
+                            )}
                         </div>
                     ))}
                     {isTyping && (
