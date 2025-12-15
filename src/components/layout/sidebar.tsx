@@ -1,20 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { LayoutDashboard, Users, BookOpen, Settings, LogOut, Briefcase } from "lucide-react"
 
-const navigation = [
-    { name: "Tableau de bord", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Bilans", href: "/bilans", icon: Users },
-    { name: "Catalogue Métiers", href: "/catalogue", icon: BookOpen },
-    { name: "Paramètres", href: "/settings", icon: Settings },
-]
-
 export function Sidebar() {
     const pathname = usePathname()
+    const router = useRouter()
     const [role, setRole] = useState<"rh" | "salarie">("rh")
 
     useEffect(() => {
@@ -76,8 +70,7 @@ export function Sidebar() {
                 <button
                     onClick={() => {
                         localStorage.removeItem("userRole")
-                        // Force hard reload to clear state and go to login
-                        window.location.href = "/login"
+                        router.push("/login")
                     }}
                     className="flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                 >
