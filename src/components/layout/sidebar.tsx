@@ -66,7 +66,7 @@ export function Sidebar() {
                     })}
                 </nav>
             </div>
-            <div className="border-t p-4">
+            <div className="border-t p-4 pb-8 md:pb-4">
                 <button
                     onClick={() => {
                         localStorage.removeItem("userRole")
