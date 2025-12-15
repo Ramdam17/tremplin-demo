@@ -22,14 +22,29 @@ export function ChatAssistant() {
     const [isTyping, setIsTyping] = useState(false)
     const scrollRef = useRef<HTMLDivElement>(null)
 
+    const [role, setRole] = useState<"rh" | "salarie">("rh")
+
+    useEffect(() => {
+        const storedRole = localStorage.getItem("userRole") as "rh" | "salarie"
+        if (storedRole) {
+            setRole(storedRole)
+            // Update initial greeting based on role
+            const greeting = storedRole === "rh"
+                ? "Bonjour ! Je suis l'assistant RH. Besoin d'un point sur le budget, le climat social ou la GPEC ?"
+                : "Bonjour ! Je suis Tremplin Coach 🤖. Je peux répondre à vos questions sur les formations, les financements ou vous aider à optimiser votre parcours."
+
+            setMessages([{ id: "1", role: "bot", text: greeting }])
+        }
+    }, [])
+
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight
         }
     }, [messages, isTyping])
 
-    // Knowledge Base for the Demo
-    const knowledgeBase = [
+    // Knowledge Base for Salarié
+    const knowledgeBaseSalarie = [
         {
             keywords: ["financement", "cout", "coût", "payer", "prix", "cpf", "argent"],
             response: "Le financement est un point clé. Dans votre cas, nous pouvons mobiliser votre **CPF** (2 150 € disponibles) et solliciter un **abondement correctif** de l'entreprise. \n\nEn moyenne, le reste à charge pour le salarié est de **0 €** grâce à ces dispositifs."
@@ -52,12 +67,34 @@ export function ChatAssistant() {
         }
     ]
 
+    // Knowledge Base for RH
+    const knowledgeBaseRH = [
+        {
+            keywords: ["budget", "cout", "dépense", "argent", "finances"],
+            response: "Point Budget Formation T3 :\n\n• **Engagé** : 245 000 € (78% du budget annuel)\n• **Reste à engager** : 65 000 €\n• **ROI estimé** : 1.4 sur les actions de reconversion interne.\n\nSouhaitez-vous exporter le rapport complet ?"
+        },
+        {
+            keywords: ["climat", "social", "ambiance", "moral", "stress"],
+            response: "Analyse du climat social :\n\n• **Satisfaction globale** : 4.2/5 (+0.3 pts)\n• **Point de vigilance** : Équipe Logistique de nuit (Turnover en hausse de 5%).\n• **Action recommandée** : Lancer une enquête QVT ciblée."
+        },
+        {
+            keywords: ["gpec", "compétences", "mobilité", "besoins", "recrutement"],
+            response: "Alerte GPEC - Maintenance :\n\nNous anticipons **3 départs à la retraite** d'ici 18 mois sur le pôle Maintenance. \n\nActuellement, **5 salariés** sont en parcours de reconversion vers ces métiers via Tremplin. Le vivier est suffisant."
+        },
+        {
+            keywords: ["bonjour", "salut", "hello", "coucou"],
+            response: "Bonjour ! Prêt à piloter votre capital humain ? Je suis à votre écoute."
+        }
+    ]
+
     const findBestResponse = (userInput: string) => {
         const lowerInput = userInput.toLowerCase()
-        const match = knowledgeBase.find(item =>
+        const currentKnowledgeBase = role === "rh" ? knowledgeBaseRH : knowledgeBaseSalarie
+
+        const match = currentKnowledgeBase.find(item =>
             item.keywords.some(keyword => lowerInput.includes(keyword))
         )
-        return match ? match.response : "C'est une excellente question. Je n'ai pas la réponse exacte là tout de suite, mais je peux **planifier un échange de 15 min** avec un conseiller RH pour creuser ce point. \n\nVoulez-vous que je regarde les disponibilités ?"
+        return match ? match.response : "Je n'ai pas cette donnée précise en mémoire immédiate. Voulez-vous que je génère un rapport PDF sur ce sujet ?"
     }
 
     const handleSendMessage = () => {
