@@ -1,7 +1,7 @@
-:HL["/tremplin-demo/_next/static/chunks/f264ca42276d1e1a.css","style"]
+:HL["/tremplin-demo/_next/static/chunks/f69697b138154b88.css","style"]
 :HL["/tremplin-demo/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["https://api.dicebear.com/7.x/avataaars/svg?seed=Sebastien","image"]
 :HL["https://api.dicebear.com/7.x/avataaars/svg?seed=Thomas","image"]
 :HL["https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie","image"]
 :HL["https://api.dicebear.com/7.x/avataaars/svg?seed=Karim","image"]
-0:{"buildId":"di3OuiXIFf5oIuAt0VPKj","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"(platform)","paramType":null,"paramKey":"(platform)","hasRuntimePrefetch":false,"slots":{"children":{"name":"dashboard","paramType":null,"paramKey":"dashboard","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
+0:{"buildId":"CZ6OJBHuWHzTZZ12K4vEs","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"(platform)","paramType":null,"paramKey":"(platform)","hasRuntimePrefetch":false,"slots":{"children":{"name":"dashboard","paramType":null,"paramKey":"dashboard","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
