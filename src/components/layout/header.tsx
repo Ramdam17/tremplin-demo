@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search } from "lucide-react"
+import { Bell, Search, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
@@ -18,6 +18,15 @@ export function Header() {
                 </div>
             </div>
             <div className="flex items-center gap-4">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="hidden md:flex gap-2 items-center text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                    onClick={() => window.dispatchEvent(new Event('openCockpit'))}
+                >
+                    <Sparkles className="h-4 w-4" />
+                    Assistant
+                </Button>
                 <Button variant="ghost" size="icon" className="relative">
                     <Bell className="h-5 w-5" />
                     <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-destructive" />

@@ -2,9 +2,8 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { MessageSquare, X, Send, Bot } from "lucide-react"
+import { X, Send, Sparkles, User, Bot, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Message {
@@ -14,10 +13,10 @@ interface Message {
 }
 
 export function ChatAssistant() {
+    // Shared state management could be moved to context, but fine here for demo scope
+    // We use a custom event to trigger opening from Header
     const [isOpen, setIsOpen] = useState(false)
-    const [messages, setMessages] = useState<Message[]>([
-        { id: "1", role: "bot", text: "Bonjour ! Je suis Tremplin Coach 🤖. Je peux répondre à vos questions sur les formations, les financements ou vous aider à optimiser votre parcours." }
-    ])
+    const [messages, setMessages] = useState<Message[]>([])
     const [input, setInput] = useState("")
     const [isTyping, setIsTyping] = useState(false)
     const scrollRef = useRef<HTMLDivElement>(null)
@@ -25,15 +24,23 @@ export function ChatAssistant() {
     const [role, setRole] = useState<"rh" | "salarie">("rh")
 
     useEffect(() => {
+        // Listen for custom event from Header
+        const handleOpenCopilot = () => setIsOpen(true)
+        window.addEventListener('openCockpit', handleOpenCopilot)
+        return () => window.removeEventListener('openCockpit', handleOpenCopilot)
+    }, [])
+
+    useEffect(() => {
         const storedRole = localStorage.getItem("userRole") as "rh" | "salarie"
         if (storedRole) {
             setRole(storedRole)
-            // Update initial greeting based on role
             const greeting = storedRole === "rh"
-                ? "Bonjour ! Je suis l'assistant RH. Besoin d'un point sur le budget, le climat social ou la GPEC ?"
-                : "Bonjour ! Je suis Tremplin Coach 🤖. Je peux répondre à vos questions sur les formations, les financements ou vous aider à optimiser votre parcours."
+                ? "Bonjour. Je suis votre Assistant RH Intelligent. Je peux analyser vos données sociales ou préparer vos rapports."
+                : "Bonjour ! Je suis votre Copilote de Carrière. Parlons de votre avenir, de vos droits ou de votre formation."
 
-            setMessages([{ id: "1", role: "bot", text: greeting }])
+            if (messages.length === 0) {
+                setMessages([{ id: "1", role: "bot", text: greeting }])
+            }
         }
     }, [])
 
@@ -41,7 +48,8 @@ export function ChatAssistant() {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight
         }
-    }, [messages, isTyping])
+    }, [messages, isTyping, isOpen])
+
 
     // Knowledge Base for Salarié
     const knowledgeBaseSalarie = [
@@ -60,6 +68,10 @@ export function ChatAssistant() {
         {
             keywords: ["peur", "stress", "difficile", "capable", "niveau", "peux pas"],
             response: "C'est normal d'avoir des doutes. Sachez que **85% de vos compétences actuelles** (rigueur, sécurité, travail d'équipe) sont transférables.\n\nLa formation est très pratique (70% d'atelier) et conçue pour des profils comme le vôtre."
+        },
+        {
+            keywords: ["merci", "top", "super"],
+            response: "Avec plaisir ! N'hésitez pas si vous avez d'autres questions."
         },
         {
             keywords: ["bonjour", "salut", "hello", "coucou"],
@@ -102,12 +114,12 @@ export function ChatAssistant() {
 
         const userMsg: Message = { id: Date.now().toString(), role: "user", text: input }
         setMessages(prev => [...prev, userMsg])
-        const userQuestion = input // Capture for closure
+        const userQuestion = input
         setInput("")
         setIsTyping(true)
 
-        // Simulate reading & typing time based on complexity
-        const delay = 1000 + Math.random() * 1000
+        // Simulate reading & typing time
+        const delay = 800 + Math.random() * 800
 
         setTimeout(() => {
             const responseText = findBestResponse(userQuestion)
@@ -117,63 +129,116 @@ export function ChatAssistant() {
     }
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
-            {/* Chat Window */}
+        <>
+            {/* Backdrop for Copilot Mode */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-background/20 backdrop-blur-sm z-40 transition-opacity"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            {/* Side Panel */}
             <div className={cn(
-                "bg-background border rounded-lg shadow-xl w-80 sm:w-96 mb-4 transition-all duration-300 origin-bottom-right pointer-events-auto",
-                isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4 pointer-events-none h-0 overflow-hidden"
+                "fixed top-0 right-0 bottom-0 z-50 w-full md:w-[450px] bg-background/95 backdrop-blur-xl border-l shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col",
+                isOpen ? "translate-x-0" : "translate-x-full"
             )}>
-                <CardHeader className="bg-primary text-primary-foreground p-4 rounded-t-lg flex flex-row items-center justify-between space-y-0">
-                    <div className="flex items-center gap-2">
-                        <Bot className="h-5 w-5" />
-                        <CardTitle className="text-base">Tremplin Coach</CardTitle>
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                            <Sparkles className="h-4 w-4" />
+                        </div>
+                        <div>
+                            <h2 className="font-semibold text-sm">Tremplin Copilot</h2>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                En ligne
+                            </p>
+                        </div>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-primary-foreground hover:bg-primary/20" onClick={() => setIsOpen(false)}>
-                        <X className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="hover:bg-muted/50 rounded-full">
+                        <X className="h-5 w-5" />
                     </Button>
-                </CardHeader>
-                <div ref={scrollRef} className="h-80 overflow-y-auto p-4 space-y-4">
+                </div>
+
+                {/* Messages */}
+                <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6">
                     {messages.map((msg) => (
                         <div key={msg.id} className={cn(
-                            "flex w-max max-w-[85%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre-wrap",
-                            msg.role === "user" ? "ml-auto bg-primary text-primary-foreground" : "bg-muted"
+                            "flex gap-3 max-w-[90%]",
+                            msg.role === "user" ? "ml-auto flex-row-reverse" : ""
                         )}>
-                            {msg.text.split("**").map((part, i) =>
-                                i % 2 === 1 ? <span key={i} className="font-bold">{part}</span> : part
-                            )}
+                            <div className={cn(
+                                "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center",
+                                msg.role === "user" ? "bg-muted" : "bg-gradient-to-br from-indigo-500 to-violet-600 text-white"
+                            )}>
+                                {msg.role === "user" ? <User className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+                            </div>
+
+                            <div className={cn(
+                                "rounded-2xl px-4 py-3 text-sm shadow-sm whitespace-pre-wrap",
+                                msg.role === "user"
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-muted/50 border backdrop-blur-md"
+                            )}>
+                                {msg.text.split("**").map((part, i) =>
+                                    i % 2 === 1 ? <span key={i} className="font-bold opacity-90">{part}</span> : part
+                                )}
+                            </div>
                         </div>
                     ))}
                     {isTyping && (
-                        <div className="bg-muted w-max rounded-lg px-3 py-2 flex gap-1">
-                            <span className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                            <span className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                            <span className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full animate-bounce"></span>
+                        <div className="flex gap-3">
+                            <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white">
+                                <Sparkles className="h-4 w-4" />
+                            </div>
+                            <div className="bg-muted/50 border rounded-2xl px-4 py-3 flex gap-1 items-center h-10 w-16 justify-center">
+                                <span className="w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                <span className="w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span className="w-1.5 h-1.5 bg-foreground/30 rounded-full animate-bounce"></span>
+                            </div>
                         </div>
                     )}
                 </div>
-                <div className="p-4 border-t mt-auto">
-                    <form onSubmit={(e) => { e.preventDefault(); handleSendMessage() }} className="flex gap-2">
+
+                {/* Input Area */}
+                <div className="p-4 border-t bg-muted/10">
+                    <form onSubmit={(e) => { e.preventDefault(); handleSendMessage() }} className="relative">
                         <Input
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Posez votre question..."
-                            className="flex-1"
+                            placeholder="Posez une question à votre assistant..."
+                            className="pr-12 py-6 bg-background/50 border shadow-sm rounded-xl focus-visible:ring-indigo-500"
+                            autoFocus
                         />
-                        <Button type="submit" size="icon" disabled={!input.trim()}>
+                        <Button
+                            type="submit"
+                            size="icon"
+                            disabled={!input.trim()}
+                            className="absolute right-1 top-1 h-10 w-10 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-md"
+                        >
                             <Send className="h-4 w-4" />
                         </Button>
                     </form>
+                    <div className="text-center mt-2">
+                        <p className="text-[10px] text-muted-foreground">L'IA peut faire des erreurs. Vérifiez les informations importantes.</p>
+                    </div>
                 </div>
             </div>
 
-            {/* Toggle Button */}
-            <Button
-                size="icon"
-                className="h-14 w-14 rounded-full shadow-lg pointer-events-auto bg-primary text-primary-foreground hover:bg-primary/90 animate-in zoom-in duration-300"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
-            </Button>
-        </div>
+            {/* Floating Trigger (Bottom Right) - Reduced Size & Modern Look */}
+            {!isOpen && (
+                <Button
+                    onClick={() => setIsOpen(true)}
+                    className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:scale-105 transition-all duration-300 z-30 group"
+                >
+                    <Sparkles className="h-5 w-5 fill-white" />
+                    <span className="absolute right-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-foreground text-background text-xs px-2 py-1 rounded shadow-sm font-medium">
+                        Ouvrir Copilot
+                    </span>
+                </Button>
+            )}
+        </>
     )
 }
