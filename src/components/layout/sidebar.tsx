@@ -33,7 +33,7 @@ export function Sidebar() {
     const navigation = role === "rh" ? rhNavigation : salarieNavigation
 
     return (
-        <div className="flex h-full w-64 flex-col border-r bg-card">
+        <div className="flex h-full w-full md:w-64 flex-col border-r bg-card">
             <div className="flex h-16 items-center px-6 border-b">
                 <span className="text-xl font-bold bg-gradient-to-r from-primary to-indigo-400 bg-clip-text text-transparent">
                     Tremplin

@@ -66,7 +66,7 @@ export default function DashboardSalariePage() {
                 </Card>
 
                 {/* 3. Recommendations Grid */}
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <Link href="/articles/metiers-futur">
                         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-100 dark:border-amber-900 shadow-sm hover:shadow-md transition-shadow cursor-pointer group h-full">
                             <CardHeader>

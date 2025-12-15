@@ -3,11 +3,13 @@
 import { Bell, Search, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { MobileSidebar } from "@/components/layout/mobile-sidebar"
 
 export function Header() {
     return (
         <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center border-b bg-background/80 px-6 backdrop-blur-sm">
             <div className="flex flex-1 items-center gap-4">
+                <MobileSidebar />
                 <div className="relative w-full max-w-sm">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input

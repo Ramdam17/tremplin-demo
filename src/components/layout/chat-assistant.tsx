@@ -130,17 +130,17 @@ export function ChatAssistant() {
 
     return (
         <>
-            {/* Backdrop for Copilot Mode */}
+            {/* Backdrop for Copilot Mode (Desktop only) */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-background/20 backdrop-blur-sm z-40 transition-opacity"
+                    className="fixed inset-0 bg-background/20 backdrop-blur-sm z-40 transition-opacity hidden md:block"
                     onClick={() => setIsOpen(false)}
                 />
             )}
 
             {/* Side Panel */}
             <div className={cn(
-                "fixed top-0 right-0 bottom-0 z-50 w-full md:w-[450px] bg-background/95 backdrop-blur-xl border-l shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col",
+                "fixed top-0 right-0 bottom-0 z-[60] w-full md:w-[450px] bg-background/95 backdrop-blur-xl border-l shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col",
                 isOpen ? "translate-x-0" : "translate-x-full"
             )}>
                 {/* Header */}
